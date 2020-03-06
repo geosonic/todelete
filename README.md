@@ -4,7 +4,7 @@
 Функционал взят [отсюда](https://github.com/P2LOVE/VK-UserSide-Bot).
 Используется библиотека [VK SDK](https://github.com/SevereCloud/vksdk) от [SevereCloud](https://github.com/SevereCloud).
 
-![](https://cdn.discordapp.com/attachments/634650740635205643/685358450976227378/AcaW1yF8Er.gif)
+![](https://github.com/geosonic/todelete/blob/master/example.gif)
 
 # Установка
 
