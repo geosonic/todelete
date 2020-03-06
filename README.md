@@ -19,6 +19,7 @@ func main() {
 
 # Несколько аккаунтов
 
+main.go
 ```go
 func main() {
   go start("Токен", "триггер-слово")
