@@ -41,3 +41,7 @@ go run main.go
 ```shell
 go build main.go
 ```
+
+# Обратная связь
+
+Все баги и предложения в Issues, Pull Requests также буду смотреть.
