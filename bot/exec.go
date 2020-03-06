@@ -3,7 +3,6 @@ package bot
 import (
 	"fmt"
 	"github.com/SevereCloud/vksdk/api"
-	"log"
 )
 
 /*
@@ -46,24 +45,21 @@ counter = counter + 1;
 
 func DeleteExec(vk *api.VK, toDeleteCount, peerID int) {
 	code :=
-		fmt.Sprintf(code + `// Возвращаем результат
+		fmt.Sprintf(code+`// Возвращаем результат
 		return API.messages.delete({message_ids: toDelete, delete_for_all: 1});`, toDeleteCount, peerID)
 
 	_ = vk.Execute(code, nil)
 }
 
 func GetMessages(vk *api.VK, toDeleteCount, peerID int) []int {
-	code := fmt.Sprintf(code + `// Возвращаем результат
+	code := fmt.Sprintf(code+`// Возвращаем результат
 		return {messages: toDelete};`, toDeleteCount, peerID)
 
 	var resp struct {
 		Messages []int `json:"messages"`
 	}
 
-	err := vk.Execute(code, &resp)
-	if err != nil {
-		log.Fatal(err)
-	}
+	_ = vk.Execute(code, &resp)
 
 	return resp.Messages
 

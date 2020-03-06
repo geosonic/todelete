@@ -2,14 +2,15 @@ package bot
 
 import (
 	"fmt"
-	"github.com/SevereCloud/vksdk/api"
-	"github.com/SevereCloud/vksdk/api/errors"
-	"github.com/SevereCloud/vksdk/longpoll-user"
 	"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/SevereCloud/vksdk/api"
+	"github.com/SevereCloud/vksdk/api/errors"
+	"github.com/SevereCloud/vksdk/longpoll-user"
 )
 
 type Message struct {
@@ -73,10 +74,9 @@ func Start(token, triggerWord string) {
 			}
 
 			for _, v := range messages {
-
 				if v != message.ID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
-
+					log.Println(err)
 					switch errors.GetType(err) {
 					case errors.Captcha:
 						break
