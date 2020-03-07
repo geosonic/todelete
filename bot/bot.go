@@ -56,6 +56,10 @@ func Start(token, triggerWord string) {
 			return nil
 		}
 
+		if result[0] != triggerWord {
+			return nil
+		}
+
 		if result[1] == "-" {
 			toDeleteReplace = true
 		}
@@ -76,7 +80,6 @@ func Start(token, triggerWord string) {
 			for _, v := range messages {
 				if v != message.ID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
-					log.Println(err)
 					switch errors.GetType(err) {
 					case errors.Captcha:
 						break
