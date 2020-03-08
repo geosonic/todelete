@@ -8,19 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/SevereCloud/vksdk/longpoll-user/v3"
+
 	"github.com/SevereCloud/vksdk/api"
 	"github.com/SevereCloud/vksdk/api/errors"
 	"github.com/SevereCloud/vksdk/longpoll-user"
 )
-
-type Message struct {
-	Event     int
-	ID        int
-	Flags     int
-	PeerID    int
-	Timestamp int
-	Text      string
-}
 
 func Start(token, triggerWord string) {
 
@@ -32,19 +25,15 @@ func Start(token, triggerWord string) {
 
 	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9])?", strings.ToLower(triggerWord)))
 
-	lp.EventNew(4, func(event []interface{}) error {
-		var message Message
-		message.Event = 4
-		message.ID = int(event[1].(float64))
-		message.Flags = int(event[2].(float64))
-		message.PeerID = int(event[3].(float64))
-		message.Timestamp = int(event[4].(float64))
-		message.Text = strings.ToLower(event[5].(string))
+	w := wrapper.NewWrapper(&lp)
 
-		if (message.Flags & 1 << 1) == 0 {
-			return nil
+	w.OnNewMessage(func(message wrapper.NewMessage) {
+		// Проверяем только свои сообщения
+		if !message.Flags.Has(wrapper.Outbox) {
+			return
 		}
 
+		// Проверяем сообщение
 		result := regexp1.FindStringSubmatch(message.Text)
 
 		var (
@@ -53,11 +42,7 @@ func Start(token, triggerWord string) {
 		)
 
 		if result == nil {
-			return nil
-		}
-
-		if result[0] != triggerWord {
-			return nil
+			return
 		}
 
 		if result[1] == "-" {
@@ -78,26 +63,31 @@ func Start(token, triggerWord string) {
 			}
 
 			for _, v := range messages {
-				if v != message.ID {
+				if v != message.MessageID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
-					switch errors.GetType(err) {
-					case errors.Captcha:
+
+					if errors.GetType(err) == errors.Captcha {
 						break
 					}
+
+					time.Sleep(time.Millisecond * 200)
 				}
 			}
-			messages = append(messages, message.ID)
+			messages = append(messages, message.MessageID)
 
-			_, err = vk.MessagesDelete(api.Params{"message_ids": ToArray(messages), "delete_for_all": 1})
-			if err != nil {
-				_, _ = vk.MessagesDelete(api.Params{"message_ids": ToArray(messages), "delete_for_all": 1})
+			for i := 0; i < 10; i++ {
+				_, err = vk.MessagesDelete(api.Params{"message_ids": ToArray(messages), "delete_for_all": 1})
+				if err == nil {
+					break
+				}
 			}
+
 		} else {
 			// Удаление сообщений с помощью execute
 			DeleteExec(vk, count+1, message.PeerID)
 		}
 
-		return nil
+		return
 	})
 
 	// Запуск и автоподнятие
@@ -105,5 +95,4 @@ func Start(token, triggerWord string) {
 		_ = lp.Run()
 		time.Sleep(time.Second * 10)
 	}
-
 }
