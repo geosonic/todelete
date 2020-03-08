@@ -23,7 +23,7 @@ func Start(token, triggerWord string) {
 		log.Fatal(err)
 	}
 
-	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9])?", strings.ToLower(triggerWord)))
+	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
 
 	w := wrapper.NewWrapper(&lp)
 
