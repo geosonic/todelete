@@ -45,6 +45,8 @@ func Start(token, triggerWord string) {
 			return
 		}
 
+		message.Text = strings.ToLower(message.Text)
+
 		if result[1] == "-" {
 			toDeleteReplace = true
 		}
@@ -70,7 +72,8 @@ func Start(token, triggerWord string) {
 						break
 					}
 
-					time.Sleep(time.Millisecond * 200)
+					// Задержка для корректного удаления
+					time.Sleep(time.Millisecond * 500)
 				}
 			}
 			messages = append(messages, message.MessageID)
