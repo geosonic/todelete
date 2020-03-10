@@ -33,6 +33,8 @@ func Start(token, triggerWord string) {
 			return
 		}
 
+		message.Text = strings.ToLower(message.Text)
+
 		// Проверяем сообщение
 		result := regexp1.FindStringSubmatch(message.Text)
 
@@ -44,8 +46,6 @@ func Start(token, triggerWord string) {
 		if result == nil {
 			return
 		}
-
-		message.Text = strings.ToLower(message.Text)
 
 		if result[1] == "-" {
 			toDeleteReplace = true
