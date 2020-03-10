@@ -12,6 +12,8 @@
 
 # Настройка для одного аккаунта
 
+Необходимо, чтобы у токена был [доступ](https://vk.com/dev/messages_api) к методу messages. Я использовал токен от Kate Mobile, получить его можно тут https://vkhost.github.io.
+
 main.go
 ```go
 func main() {
