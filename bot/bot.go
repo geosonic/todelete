@@ -38,21 +38,26 @@ func Start(token, triggerWord string) {
 		// Проверяем сообщение
 		result := regexp1.FindStringSubmatch(message.Text)
 
+		if result == nil {
+			return
+		}
+
 		var (
 			toDeleteReplace bool
 			count           int
 		)
 
-		if result == nil {
-			return
-		}
-
 		if result[1] == "-" {
 			toDeleteReplace = true
 		}
 		count, err = strconv.Atoi(result[2])
+
 		if err != nil {
 			count = 1
+		}
+
+		if count > 99999999999 {
+			count = 99999999998
 		}
 
 		if toDeleteReplace {
@@ -76,10 +81,9 @@ func Start(token, triggerWord string) {
 					time.Sleep(time.Millisecond * 500)
 				}
 			}
-			messages = append(messages, message.MessageID)
 
 			for i := 0; i < 10; i++ {
-				_, err = vk.MessagesDelete(api.Params{"message_ids": ToArray(messages), "delete_for_all": 1})
+				_, err = vk.MessagesDelete(api.Params{"message_ids": messages, "delete_for_all": 1})
 				if err == nil {
 					break
 				}
