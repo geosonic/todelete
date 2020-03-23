@@ -20,7 +20,7 @@ func Start(token, triggerWord string) {
 	vk := api.Init(token)
 	lp, err := longpoll.Init(vk, 2)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprintf("Account *%v: %v", token[len(token)-4:], err))
 	}
 
 	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
@@ -56,11 +56,12 @@ func Start(token, triggerWord string) {
 			count = 1
 		}
 
-		if count > 99999999999 {
-			count = 99999999998
+		if count > 10000 {
+			count = 2147483647
 		}
-
+		// TODO: Сделать всё это в горутину.
 		if toDeleteReplace {
+			fmt.Printf("Delete replace in *%v (%v)\n", token[len(token)-4:], count)
 			// Получение сообщений с помощью execute
 			messages := GetMessages(vk, count+1, message.PeerID)
 
@@ -81,7 +82,6 @@ func Start(token, triggerWord string) {
 					time.Sleep(time.Millisecond * 500)
 				}
 			}
-
 			for i := 0; i < 10; i++ {
 				_, err = vk.MessagesDelete(api.Params{"message_ids": messages, "delete_for_all": 1})
 				if err == nil {
@@ -90,6 +90,7 @@ func Start(token, triggerWord string) {
 			}
 
 		} else {
+			fmt.Printf("Delete in *%v (%v)\n", token[len(token)-4:], count)
 			// Удаление сообщений с помощью execute
 			DeleteExec(vk, count+1, message.PeerID)
 		}
@@ -99,6 +100,7 @@ func Start(token, triggerWord string) {
 
 	// Запуск и автоподнятие
 	for {
+		fmt.Printf("Run *%v", token[len(token)-4:])
 		_ = lp.Run()
 		time.Sleep(time.Second * 10)
 	}
