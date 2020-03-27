@@ -36,15 +36,17 @@ message_ids.push(message.id);
 }
 `
 
-func DeleteExec(vk *api.VK, toDeleteCount, peerID int) {
+func DeleteExec(vk *api.VK, toDeleteCount, peerID int) error {
 	code :=
 		fmt.Sprintf(code+`// Возвращаем результат удаления сообщений
 		return API.messages.delete({message_ids: message_ids, delete_for_all: 1});`, toDeleteCount, peerID)
 
-	_ = vk.Execute(code, nil)
+	err := vk.Execute(code, nil)
+
+	return err
 }
 
-func GetMessages(vk *api.VK, toDeleteCount, peerID int) []int {
+func GetMessages(vk *api.VK, toDeleteCount, peerID int) ([]int, error) {
 	code := fmt.Sprintf(code+`// Возвращаем найденные сообщения
 		return {messages_ids: message_ids};`, toDeleteCount, peerID)
 
@@ -52,7 +54,7 @@ func GetMessages(vk *api.VK, toDeleteCount, peerID int) []int {
 		Messages []int `json:"messages_ids"`
 	}
 
-	_ = vk.Execute(code, &resp)
+	err := vk.Execute(code, &resp)
 
-	return resp.Messages
+	return resp.Messages, err
 }
