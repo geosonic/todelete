@@ -16,16 +16,17 @@ import (
 )
 
 func Start(token, triggerWord string) {
-
 	vk := api.Init(token)
 	lp, err := longpoll.Init(vk, 2)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("Account *%v: %v", token[len(token)-4:], err))
+		log.Fatal(fmt.Sprintf("Account *%v: %v\n", token[len(token)-4:], err))
 	}
 
 	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
 
 	w := wrapper.NewWrapper(&lp)
+
+	acc := token[len(token)-4:]
 
 	w.OnNewMessage(func(message wrapper.NewMessage) {
 		// Проверяем только свои сообщения
@@ -61,7 +62,7 @@ func Start(token, triggerWord string) {
 		}
 		// TODO: Сделать всё это в горутину.
 		if toDeleteReplace {
-			fmt.Printf("Delete replace in *%v (%v)\n", token[len(token)-4:], count)
+			fmt.Printf("Delete replace in *%v (%v)\n", acc, count)
 			// Получение сообщений с помощью execute
 			messages := GetMessages(vk, count+1, message.PeerID)
 
@@ -70,29 +71,43 @@ func Start(token, triggerWord string) {
 				messages[i], messages[j] = messages[j], messages[i]
 			}
 
+			var count int
+
 			for _, v := range messages {
 				if v != message.MessageID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
+					if err == nil {
+						count += 1
+					}
 
 					if errors.GetType(err) == errors.Captcha {
+						log.Println(err)
 						break
 					}
 
 					// Задержка для корректного удаления
-					time.Sleep(time.Millisecond * 500)
+					if len(messages) > 2 {
+						time.Sleep(time.Second / 2)
+					}
 				}
 			}
+			log.Printf("[*%v] %v of %v messages edited.\n", count, len(messages), acc)
 			for i := 0; i < 10; i++ {
 				_, err = vk.MessagesDelete(api.Params{"message_ids": messages, "delete_for_all": 1})
 				if err == nil {
+					log.Printf("[*%v] %v messages deleted!\n", acc, len(messages))
 					break
 				}
+				log.Printf("[*%v] Error deleting, trying (%v)\n", acc, i)
 			}
 
 		} else {
-			fmt.Printf("Delete in *%v (%v)\n", token[len(token)-4:], count)
+			log.Printf("[*%v] Delete %v messages\n", acc, count)
 			// Удаление сообщений с помощью execute
-			DeleteExec(vk, count+1, message.PeerID)
+			err = DeleteExec(vk, count+1, message.PeerID)
+			if err != nil {
+				log.Printf("[*%v] Error deleting messages! (%v)\n", acc, err.Error())
+			}
 		}
 
 		return
@@ -100,7 +115,7 @@ func Start(token, triggerWord string) {
 
 	// Запуск и автоподнятие
 	for {
-		fmt.Printf("Run *%v", token[len(token)-4:])
+		log.Printf("Run *%v\n", acc)
 		_ = lp.Run()
 		time.Sleep(time.Second * 10)
 	}
