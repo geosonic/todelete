@@ -51,6 +51,7 @@ func Start(token, triggerWord string) {
 		if result[1] == "-" {
 			toDeleteReplace = true
 		}
+
 		count, err = strconv.Atoi(result[2])
 
 		if err != nil {
@@ -77,7 +78,7 @@ func Start(token, triggerWord string) {
 				if v != message.MessageID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
 					if err == nil {
-						count += 1
+						count++
 					}
 
 					if errors.GetType(err) == errors.Captcha {
