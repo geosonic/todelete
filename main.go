@@ -14,7 +14,7 @@ func main() {
 	*/
 
 	accounts := map[string]string{
-		// "token": "keyWord"
+		// "token": "keyWord",
 		"": "", // Это пример, поля не должны быть пустыми!!!
 	}
 

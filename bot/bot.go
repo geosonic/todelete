@@ -64,7 +64,7 @@ func start(token, triggerWord string) {
 		}
 		// TODO: Сделать всё это в горутину.
 		if toDeleteReplace {
-			fmt.Printf("Delete replace in *%v (%v)\n", acc, count)
+			log.Printf("Delete replace in *%v (%v)\n", acc, count)
 			// Получение сообщений с помощью execute
 			messages, err := GetMessages(vk, count+1, message.PeerID)
 			if err != nil {
