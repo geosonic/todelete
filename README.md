@@ -4,7 +4,7 @@
 Функционал взят [отсюда](https://github.com/P2LOVE/VK-UserSide-Bot).
 Используется библиотека [VK SDK](https://github.com/SevereCloud/vksdk) от [SevereCloud](https://github.com/SevereCloud).
 
-![](https://github.com/geosonic/todelete/blob/master/example.gif)
+![](example.gif)
 
 # Установка
 
@@ -16,8 +16,8 @@
 
 main.go
 ```go
-func main() {
-	start("Токен", "триггер-слово")
+    accounts := map[string]string{
+        "токен": "триггер-слово",
 }
 ```
 
@@ -25,9 +25,10 @@ func main() {
 
 main.go
 ```go
-func main() {
-	go bot.start("Токен", "триггер-слово")
-	bot.start("Токен", "триггер-слово") // Очень важно, чтобы последний запуск был без слова "go"
+    accounts := map[string]string{
+        "токен": "триггер-слово",
+        "токен": "триггер-слово",
+        "токен": "триггер-слово", // и так далее
 }
 ```
 
