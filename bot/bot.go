@@ -15,7 +15,7 @@ import (
 	"github.com/SevereCloud/vksdk/longpoll-user"
 )
 
-func Start(token, triggerWord string) {
+func start(token, triggerWord string) {
 	vk := api.Init(token)
 	lp, err := longpoll.Init(vk, 2)
 	if err != nil {
@@ -120,4 +120,13 @@ func Start(token, triggerWord string) {
 		_ = lp.Run()
 		time.Sleep(time.Second * 10)
 	}
+}
+
+func StartAccounts(accounts map[string]string) {
+	for k, v := range accounts {
+		if k != "" && v != "" {
+			go start(k, v)
+		}
+	}
+	select {}
 }
