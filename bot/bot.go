@@ -15,16 +15,17 @@ import (
 	"github.com/SevereCloud/vksdk/longpoll-user"
 )
 
+// Запускает аккаунт
 func start(token, triggerWord string) {
-	vk := api.Init(token)
-	lp, err := longpoll.Init(vk, 2)
+	vk := api.NewVK(token)
+	lp, err := longpoll.NewLongpoll(vk, 2)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Account *%v: %v\n", token[len(token)-4:], err))
 	}
 
 	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
 
-	w := wrapper.NewWrapper(&lp)
+	w := wrapper.NewWrapper(lp)
 
 	acc := token[len(token)-4:]
 
@@ -65,7 +66,10 @@ func start(token, triggerWord string) {
 		if toDeleteReplace {
 			fmt.Printf("Delete replace in *%v (%v)\n", acc, count)
 			// Получение сообщений с помощью execute
-			messages := GetMessages(vk, count+1, message.PeerID)
+			messages, err := GetMessages(vk, count+1, message.PeerID)
+			if err != nil {
+				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
+			}
 
 			// Переворачиваем список
 			for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
@@ -122,6 +126,7 @@ func start(token, triggerWord string) {
 	}
 }
 
+// Запускает аккаунты параллельно
 func StartAccounts(accounts map[string]string) {
 	for k, v := range accounts {
 		if k != "" && v != "" {
