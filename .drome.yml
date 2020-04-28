@@ -1,0 +1,20 @@
+kind: pipeline
+type: default
+
+steps:
+  - name: build
+    image: golang
+    commands:
+      - GOOS=linux GOARCH=amd64 go build -o deleter
+      - GOOS=windows GOARCH=amd64 go build -o deleter.exe
+
+  - name: release
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: api_key
+      files:
+        - deleter
+        - deleter.exe
+    when:
+      event: tag
