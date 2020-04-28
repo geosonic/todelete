@@ -2,9 +2,6 @@
  * Copyleft (ↄ) 2020, Geosonic
  */
 
-/*
- * Copyleft (ↄ) 2020, Geosonic
- */
 package main
 
 import (
