@@ -1,4 +1,5 @@
-main.go
-main
-deleter
-/doc/
+# Accounts
+config.json
+# Build
+build.bat
+build.py

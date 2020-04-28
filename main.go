@@ -1,21 +1,34 @@
+/*
+ * Copyleft (ↄ) 2020, Geosonic
+ */
+
+/*
+ * Copyleft (ↄ) 2020, Geosonic
+ */
 package main
 
 import (
 	"deleter/bot"
+	"encoding/json"
+	"io/ioutil"
+	"log"
 )
 
 func main() {
-	/*
-		Вот пример как вбивать аккаунты:
-			accounts := map[string]string{
-			"token": "keyWord",
-			"token": "keyWord",
-		}
-	*/
+	/* Аккаунты теперь должны находиться в config.json */
+	var accounts map[string]string
+	file, err := ioutil.ReadFile("config.json")
+	if err != nil {
+		panic(err)
+	}
 
-	accounts := map[string]string{
-		// "token": "keyWord",
-		"": "", // Это пример, поля не должны быть пустыми!!!
+	err = json.Unmarshal(file, &accounts)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(accounts) == 0 {
+		log.Fatalln("Аккаунты не обнаружены!")
 	}
 
 	// Функция запуска аккаунтов

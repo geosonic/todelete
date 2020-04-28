@@ -1,3 +1,10 @@
+/*
+ * Copyleft (ↄ) 2020, Geosonic
+ */
+
+/*
+ * Copyleft (ↄ) 2020, GeoSonic
+ */
 package bot
 
 import (
@@ -30,6 +37,7 @@ func start(token, triggerWord string) {
 	acc := token[len(token)-4:]
 
 	w.OnNewMessage(func(message wrapper.NewMessage) {
+		/* TODO: Лог необходимо переработать */
 		// Проверяем только свои сообщения
 		if !message.Flags.Has(wrapper.Outbox) {
 			return
@@ -44,6 +52,7 @@ func start(token, triggerWord string) {
 			return
 		}
 
+		// TODO: Переделать в структуру
 		var (
 			toDeleteReplace bool
 			count           int
@@ -59,10 +68,6 @@ func start(token, triggerWord string) {
 			count = 1
 		}
 
-		if count > 10000 {
-			count = 2147483647
-		}
-		// TODO: Сделать всё это в горутину.
 		if toDeleteReplace {
 			log.Printf("Delete replace in *%v (%v)\n", acc, count)
 			// Получение сообщений с помощью execute
@@ -71,7 +76,8 @@ func start(token, triggerWord string) {
 				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
 			}
 
-			// Переворачиваем список
+			// Переворачиваем список, если вы хотите, чтобы сообщения
+			// удалялись в другом порядке, этот цикл нужно убрать
 			for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
 				messages[i], messages[j] = messages[j], messages[i]
 			}
@@ -83,12 +89,12 @@ func start(token, triggerWord string) {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
 					if err == nil {
 						count++
-						log.Printf("Edited %v message\n", count)
-					}
-
-					if errors.GetType(err) == errors.Captcha {
-						log.Println(err)
-						break
+						log.Printf("Edited %v messages\n", count)
+					} else {
+						if errors.GetType(err) == errors.Captcha {
+							log.Println(err)
+							break
+						}
 					}
 
 					// Задержка для корректного удаления

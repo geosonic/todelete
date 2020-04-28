@@ -4,8 +4,11 @@ github.com/SevereCloud/vksdk v1.4.0 h1:0yA7mlcHxj6wK3tGg1bh9zFFvVrc6f3lp7qZWDtro
 github.com/SevereCloud/vksdk v1.4.0/go.mod h1:M8rhuKgXhOcTU9H/4HvzMbZIw/T6ZrtIbnd83wQM6YA=
 github.com/SevereCloud/vksdk v1.5.0 h1:EnOVENRwdS8VokZs/I4uUOZc3hbY+RQ/EUcVqJ0Li7A=
 github.com/SevereCloud/vksdk v1.5.0/go.mod h1:M8rhuKgXhOcTU9H/4HvzMbZIw/T6ZrtIbnd83wQM6YA=
+github.com/SevereCloud/vksdk v1.6.0 h1:nX5kg49DUr0dr/aY1INpVUqsO3uO9wdAlZ5qPxcQ1Xo=
+github.com/SevereCloud/vksdk v1.6.0/go.mod h1:j64XT+5kqOmoESNg3Lo1mJYoNogPJ80OUADQ9HywIZg=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/gorilla/schema v1.1.0/go.mod h1:kgLaKoK1FELgZqMAVxx/5cbj0kT+57qxUrAlIO2eleU=
 github.com/gorilla/websocket v1.4.1/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/pkg/errors v0.8.1 h1:iURUrRGxPUNPdy5/HRSm+Yj6okJ6UtLINN0Q9M4+h3I=
