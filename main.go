@@ -2,6 +2,10 @@
  * Copyleft (ↄ) 2020, Geosonic
  */
 
+/*
+ * Copyleft (ↄ) 2020, Geosonic
+ */
+
 package main
 
 import (
@@ -25,7 +29,7 @@ func main() {
 	}
 
 	if len(accounts) == 0 {
-		log.Fatalln("Аккаунты не обнаружены!")
+		log.Fatalln("Accounts not found!")
 	}
 
 	// Функция запуска аккаунтов
