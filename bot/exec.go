@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyleft (ↄ) 2020, GeoSonic
+ * Copyleft (ↄ) 2020, Geosonic
  */
 package bot
 
