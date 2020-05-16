@@ -1,9 +1,5 @@
 /*
- * Copyleft (ↄ) 2020, Geosonic
- */
-
-/*
- * Copyleft (ↄ) 2020, Geosonic
+ * Copyright (c) 2020 GeoSonic. All rights reserved.
  */
 
 package main

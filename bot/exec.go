@@ -1,5 +1,5 @@
 /*
- * Copyleft (ↄ) 2020, Geosonic
+ * Copyright (c) 2020 GeoSonic. All rights reserved.
  */
 
 package bot
@@ -53,13 +53,11 @@ func DeleteExec(vk *api.VK, toDeleteCount, peerID int) error {
 
 func GetMessages(vk *api.VK, toDeleteCount, peerID int) ([]int, error) {
 	code := // Возвращаем найденные сообщения
-		fmt.Sprintf(code+`return {messages_ids: message_ids};`, toDeleteCount, peerID)
+		fmt.Sprintf(code+`return message_ids;`, toDeleteCount, peerID)
 
-	var resp struct {
-		Messages []int `json:"messages_ids"`
-	}
+	var resp []int
 
 	err := vk.Execute(code, &resp)
 
-	return resp.Messages, err
+	return resp, err
 }

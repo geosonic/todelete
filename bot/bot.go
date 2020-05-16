@@ -1,5 +1,5 @@
 /*
- * Copyleft (ↄ) 2020, Geosonic
+ * Copyright (c) 2020 GeoSonic. All rights reserved.
  */
 
 package bot
@@ -22,9 +22,11 @@ import (
 // Запускает аккаунт
 func start(token, triggerWord string) {
 	vk := api.NewVK(token)
+	vk.Limit = api.LimitUserToken
 	lp, err := longpoll.NewLongpoll(vk, 2)
 	if err != nil {
-		log.Fatalf("Account *%v: %v\n", token[len(token)-4:], err)
+		log.Printf("Account *%v: %v\n", token[len(token)-4:], err)
+		return
 	}
 
 	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
@@ -49,26 +51,25 @@ func start(token, triggerWord string) {
 			return
 		}
 
-		// TODO: Переделать в структуру
-		var (
-			toDeleteReplace bool
-			count           int
-		)
+		var info struct {
+			replace bool
+			count   int
+		}
 
 		if result[1] == "-" {
-			toDeleteReplace = true
+			info.replace = true
 		}
 
-		count, err = strconv.Atoi(result[2])
+		info.count, err = strconv.Atoi(result[2])
 
 		if err != nil {
-			count = 1
+			info.count = 1
 		}
 
-		if toDeleteReplace {
-			log.Printf("Delete replace in *%v (%v)\n", acc, count)
+		if info.replace {
+			log.Printf("Delete replace in *%v (%v)\n", acc, info.count)
 			// Получение сообщений с помощью execute
-			messages, err := GetMessages(vk, count+1, message.PeerID)
+			messages, err := GetMessages(vk, info.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
 			}
@@ -113,14 +114,13 @@ func start(token, triggerWord string) {
 			}
 
 		} else {
-			log.Printf("[*%v] Delete %v messages\n", acc, count)
+			log.Printf("[*%v] Delete %v messages\n", acc, info.count)
 			// Удаление сообщений с помощью execute
-			err = DeleteExec(vk, count+1, message.PeerID)
+			err = DeleteExec(vk, info.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error deleting messages! (%v)\n", acc, err.Error())
 			}
 		}
-
 		return
 	})
 
