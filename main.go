@@ -7,21 +7,24 @@ package main
 import (
 	"deleter/bot"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"runtime"
 )
 
 func main() {
 	/* Аккаунты теперь должны находиться в config.json */
-	var accounts map[string]string
+	fmt.Printf("To Delete 1.1 by GeoSonic for %v_%v\n", runtime.GOOS, runtime.GOARCH)
+	var accounts map[string]interface{}
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
-		panic(err)
+		log.Fatalln("Error reading file:", err)
 	}
 
 	err = json.Unmarshal(file, &accounts)
 	if err != nil {
-		panic(err)
+		log.Fatalln("Can't unmarshal json:", err)
 	}
 
 	if len(accounts) == 0 {

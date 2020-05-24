@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -20,16 +21,36 @@ import (
 )
 
 // Запускает аккаунт
-func start(token, triggerWord string) {
+func start(token string, triggerWord interface{}) {
 	vk := api.NewVK(token)
 	vk.Limit = api.LimitUserToken
 	lp, err := longpoll.NewLongpoll(vk, 2)
 	if err != nil {
-		log.Printf("Account *%v: %v\n", token[len(token)-4:], err)
+		log.Printf("Account run failed [*%v]: %v\n", token[len(token)-4:], err)
 		return
 	}
 
-	regexp1 := regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(triggerWord)))
+	var regexp1 *regexp.Regexp
+
+	switch tr := triggerWord.(type) {
+	case string:
+		regexp1 = regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(tr)))
+	case []interface{}:
+		var keyWords = make([]string, 0, len(tr))
+		for _, v := range tr {
+			switch k := v.(type) {
+			case string:
+				keyWords = append(keyWords, strings.ToLower(k))
+			case rune:
+				keyWords = append(keyWords, strings.ToLower(string(k)))
+			default:
+				log.Fatalln("Incorrect config.")
+			}
+		}
+		regexp1 = regexp.MustCompile(fmt.Sprintf("^(?:%v)(-)?([0-9]+)?", strings.Join(keyWords, "|")))
+	default:
+		log.Fatalln("Incorrect config.")
+	}
 
 	w := wrapper.NewWrapper(lp)
 
@@ -72,13 +93,11 @@ func start(token, triggerWord string) {
 			messages, err := GetMessages(vk, info.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
+				return
 			}
 
-			// Переворачиваем список, если вы хотите, чтобы сообщения
-			// удалялись в другом порядке, этот цикл нужно убрать
-			for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
-				messages[i], messages[j] = messages[j], messages[i]
-			}
+			// Переворачиваем список
+			sort.Sort(sort.IntSlice(messages))
 
 			var count int
 
@@ -133,7 +152,7 @@ func start(token, triggerWord string) {
 }
 
 // Запускает аккаунты параллельно
-func StartAccounts(accounts map[string]string) {
+func StartAccounts(accounts map[string]interface{}) {
 	for k, v := range accounts {
 		if k != "" && v != "" {
 			go start(k, v)
