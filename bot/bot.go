@@ -5,9 +5,7 @@
 package bot
 
 import (
-	"fmt"
 	"log"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -23,33 +21,23 @@ import (
 // Запускает аккаунт
 func start(token string, triggerWord interface{}) {
 	vk := api.NewVK(token)
+	// Чтобы избежать конфликтов в отправке
+	// запросов, установим лимит
 	vk.Limit = api.LimitUserToken
-	lp, err := longpoll.NewLongpoll(vk, 2)
+	lp, err := longpoll.NewLongpoll(vk, longpoll.ReceiveAttachments)
 	if err != nil {
-		log.Printf("Account run failed [*%v]: %v\n", token[len(token)-4:], err)
+		if errors.GetType(err) == errors.Auth {
+			log.Println("Account run failed: invalid token")
+		} else {
+			log.Printf("Account run failed [*%v]: %v\n", token[len(token)-4:], err.Error())
+		}
 		return
 	}
 
-	var regexp1 *regexp.Regexp
+	regexp1, _ := parse(triggerWord)
 
-	switch tr := triggerWord.(type) {
-	case string:
-		regexp1 = regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(tr)))
-	case []interface{}:
-		var keyWords = make([]string, 0, len(tr))
-		for _, v := range tr {
-			switch k := v.(type) {
-			case string:
-				keyWords = append(keyWords, strings.ToLower(k))
-			case rune:
-				keyWords = append(keyWords, strings.ToLower(string(k)))
-			default:
-				log.Fatalln("Incorrect config.")
-			}
-		}
-		regexp1 = regexp.MustCompile(fmt.Sprintf("^(?:%v)(-)?([0-9]+)?", strings.Join(keyWords, "|")))
-	default:
-		log.Fatalln("Incorrect config.")
+	if regexp1 == nil {
+		log.Printf("Account run failed [*%v]: Must be trigger word string or []string.\n", token[len(token)-4:])
 	}
 
 	w := wrapper.NewWrapper(lp)
@@ -72,42 +60,49 @@ func start(token string, triggerWord interface{}) {
 			return
 		}
 
-		var info struct {
+		var toDelete struct {
 			replace bool
 			count   int
 		}
 
 		if result[1] == "-" {
-			info.replace = true
+			toDelete.replace = true
 		}
 
-		info.count, err = strconv.Atoi(result[2])
+		toDelete.count, err = strconv.Atoi(result[2])
 
 		if err != nil {
-			info.count = 1
+			toDelete.count = 1
 		}
 
-		if info.replace {
-			log.Printf("Delete replace in *%v (%v)\n", acc, info.count)
+		if toDelete.replace {
+			log.Printf("Delete replace in *%v (%v)\n", acc, toDelete.count)
 			// Получение сообщений с помощью execute
-			messages, err := GetMessages(vk, info.count+1, message.PeerID)
+			messages, err := GetMessages(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
 				return
 			}
 
-			// Переворачиваем список
-			sort.Sort(sort.IntSlice(messages))
+			// Сортировка списка (в нашем случае он будет перевёрнут)
+			sort.Ints(messages)
 
 			var count int
 
 			for _, v := range messages {
+				// Проверка на сообщение, вызвавшего
+				// удаление сообщений, лично я не вижу
+				// смысла редактировать такое сообщение
 				if v != message.MessageID {
 					_, err := vk.MessagesEdit(api.Params{"peer_id": message.PeerID, "message_id": v, "message": "ᅠ"})
 					if err == nil {
 						count++
 						log.Printf("Edited %v messages\n", count)
 					} else {
+						// Если же мы не смогли отредактировать сообщение
+						// из-за капчи, немедленно срываем цикл и
+						// удаляем все сообщения, т.к. больше пытаться
+						// редактировать не имеет смысла
 						if errors.GetType(err) == errors.Captcha {
 							log.Println(err)
 							break
@@ -133,14 +128,13 @@ func start(token string, triggerWord interface{}) {
 			}
 
 		} else {
-			log.Printf("[*%v] Delete %v messages\n", acc, info.count)
+			log.Printf("[*%v] Delete %v messages\n", acc, toDelete.count)
 			// Удаление сообщений с помощью execute
-			err = DeleteExec(vk, info.count+1, message.PeerID)
+			err = DeleteExec(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error deleting messages! (%v)\n", acc, err.Error())
 			}
 		}
-		return
 	})
 
 	// Запуск и автоподнятие
