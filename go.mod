@@ -3,6 +3,6 @@ module deleter
 go 1.14
 
 require (
-	github.com/SevereCloud/vksdk v1.7.0
-	golang.org/x/net v0.0.0-20200114155413-6afb5195e5aa // indirect
+	github.com/SevereCloud/vksdk v1.9.1-0.20200624133906-3bdc101c95c7
+	github.com/tdewolff/minify/v2 v2.7.6
 )
