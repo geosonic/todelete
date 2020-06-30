@@ -38,14 +38,22 @@ while (messages.length > 0 && message_ids.length < delete_count) {
 	// Переменная сообщения
 	var message = messages.shift();
 
-	// Находим свои сообщения
+	// Находим свои сообщения, сравнивая свой ID
+	// и которые возможно удалить для всех
 	if (message.from_id == self_id && (time - message.date) <= 86400) message_ids.push(message.id);
 }
 
 // Если этот аргумент "type" равен 1, значит удаляем сообщения, иначе возвращаем их ID
 if (Args.type == 1) {
-	return API.messages.delete({message_ids: message_ids, delete_for_all: 1});
+	// Если у нас есть сообщения, которые можно удалить,
+	// тогда удаляем сообщения
+	if (message_ids.length != 0) {
+		return API.messages.delete({message_ids: message_ids, delete_for_all: 1}).length;
+	}
+	// Иначе возвращаем 0
+	return 0;
 } else {
+	// Возвращаем сообщения, которые можно удалить
 	return message_ids;
 }
 `
@@ -60,10 +68,12 @@ func init() {
 	}
 }
 
-func DeleteExec(vk *api.VK, toDeleteCount, peerID int) error {
-	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "type": 1}, nil)
+func DeleteExec(vk *api.VK, toDeleteCount, peerID int) (int, error) {
+	var deleted int
 
-	return err
+	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "type": 1}, &deleted)
+
+	return deleted, err
 }
 
 func GetMessages(vk *api.VK, toDeleteCount, peerID int) ([]int, error) {

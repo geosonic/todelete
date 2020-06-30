@@ -130,10 +130,11 @@ func start(token string, triggerWord interface{}) {
 		} else {
 			log.Printf("[*%v] Delete %v messages\n", acc, toDelete.count)
 			// Удаление сообщений с помощью execute
-			err = DeleteExec(vk, toDelete.count+1, message.PeerID)
+			deleted, err := DeleteExec(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error deleting messages! (%v)\n", acc, err.Error())
 			}
+			log.Printf("[*%v] Deleted %v messages\n", acc, deleted)
 		}
 	})
 
