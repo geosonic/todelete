@@ -1,5 +1,5 @@
-github.com/SevereCloud/vksdk v1.9.1-0.20200624133906-3bdc101c95c7 h1:7hKPXcnmWKt8B47Cn3dTSOVCb41J3q3AfU+iJ7PFeJI=
-github.com/SevereCloud/vksdk v1.9.1-0.20200624133906-3bdc101c95c7/go.mod h1:BUxU4W2WoFwFU83aopUmXKTjbdgDgEDCTGdOJfdxSB0=
+github.com/SevereCloud/vksdk v1.10.0 h1:iKK2hHJSyW2yzd3ask3fxKPxmvAJ+5bqyCs/Sn4IBRQ=
+github.com/SevereCloud/vksdk v1.10.0/go.mod h1:BUxU4W2WoFwFU83aopUmXKTjbdgDgEDCTGdOJfdxSB0=
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927/go.mod h1:h/aW8ynjgkuj+NQRlZcDbAbM1ORAbXjXX77sX7T289U=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

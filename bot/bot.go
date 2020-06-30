@@ -65,6 +65,10 @@ func start(token string, triggerWord interface{}) {
 			count   int
 		}
 
+		// Если сообщение закончится на триггер + "-",
+		// значит сообщение будет отредактировано, также
+		// после "-" можно написать кол-во сообщений
+		// для удаления
 		if result[1] == "-" {
 			toDelete.replace = true
 		}
