@@ -2,8 +2,7 @@
 config.*
 
 # Build
-build.bat
-build.py
+build.*
 
 # IDEA
 .idea/*

@@ -15,11 +15,15 @@ import (
 
 func main() {
 	/* Аккаунты теперь должны находиться в config.json */
-	fmt.Printf("To Delete 1.1 by GeoSonic for %v_%v\n", runtime.GOOS, runtime.GOARCH)
+	fmt.Printf("To Delete 1.2 by GeoSonic for %v_%v\n", runtime.GOOS, runtime.GOARCH)
 	var accounts map[string]interface{}
 	file, err := ioutil.ReadFile("config.json")
 	if err != nil {
 		log.Fatalln("Error reading file:", err)
+	}
+
+	if !json.Valid(file) {
+		log.Fatalln("Incorrect config file.")
 	}
 
 	err = json.Unmarshal(file, &accounts)

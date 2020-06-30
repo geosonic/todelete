@@ -31,15 +31,15 @@ var message_ids = [];
 var messages = API.messages.getHistory({peer_id: peer_id, count: 200}).items + API.messages.getHistory({peer_id: peer_id, count: 200, offset: 200}).items;
 // Получаем ID аккаунта
 var self_id = API.users.get()[0].id;
+// Текущее время (подсказал https://vk.com/id370457723)
+var time = API.utils.getServerTime();
 
 while (messages.length > 0 && message_ids.length < delete_count) {
 	// Переменная сообщения
 	var message = messages.shift();
 
 	// Находим свои сообщения
-	if (message.from_id == self_id) {
-		message_ids.push(message.id);
-	}
+	if (message.from_id == self_id && (time - message.date) <= 86400) message_ids.push(message.id);
 }
 
 // Если этот аргумент "type" равен 1, значит удаляем сообщения, иначе возвращаем их ID
