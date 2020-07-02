@@ -44,10 +44,10 @@ while (messages.length > 0 && message_ids.length < delete_count) {
 }
 
 // Если этот аргумент "type" равен 1, значит удаляем сообщения, иначе возвращаем их ID
-if (Args.type == 1) {
+if (Args.type) {
 	// Если у нас есть сообщения, которые можно удалить,
 	// тогда удаляем сообщения
-	if (message_ids.length != 0) {
+	if (message_ids) {
 		return API.messages.delete({message_ids: message_ids, delete_for_all: 1}).length;
 	}
 	// Иначе возвращаем 0
@@ -60,6 +60,7 @@ if (Args.type == 1) {
 
 var compressedCode string
 
+// Сжатие execute кода для производительности
 func init() {
 	var err error
 	compressedCode, err = CompressJS(code)

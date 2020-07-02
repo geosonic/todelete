@@ -18,12 +18,15 @@ import (
 	"github.com/SevereCloud/vksdk/longpoll-user"
 )
 
+const Version = "1.2"
+
 // Запускает аккаунт
 func start(token string, triggerWord interface{}) {
 	vk := api.NewVK(token)
 	// Чтобы избежать конфликтов в отправке
 	// запросов, установим лимит
 	vk.Limit = api.LimitUserToken
+	vk.UserAgent += ", toDelete/" + Version + " (+https://github.com/geosonic/todelete)"
 	lp, err := longpoll.NewLongpoll(vk, longpoll.ReceiveAttachments)
 	if err != nil {
 		if errors.GetType(err) == errors.Auth {
@@ -85,6 +88,11 @@ func start(token string, triggerWord interface{}) {
 			messages, err := GetMessages(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
 				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
+				return
+			}
+
+			if len(messages) == 0 {
+				log.Printf("[*%v] Not found messages for edit.", acc)
 				return
 			}
 
