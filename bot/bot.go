@@ -8,7 +8,6 @@ import (
 	"log"
 	"sort"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/SevereCloud/vksdk/longpoll-user/v3"
@@ -53,8 +52,6 @@ func start(token string, triggerWord interface{}) {
 		if !message.Flags.Has(wrapper.Outbox) {
 			return
 		}
-
-		message.Text = strings.ToLower(message.Text)
 
 		// Проверяем сообщение
 		result := regexp1.FindStringSubmatch(message.Text)

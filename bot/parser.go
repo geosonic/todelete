@@ -17,7 +17,8 @@ func parse(triggerWord interface{}) (*regexp.Regexp, error) {
 		// регулярку и возвращаем объект, а ещё
 		// это работает как обратная совместимость
 
-		return regexp.MustCompile(fmt.Sprintf("^%v(-)?([0-9]+)?", strings.ToLower(tr))), nil
+		// language=regexp
+		return regexp.MustCompile(fmt.Sprintf("(?i)^%s(-)?([0-9]+)?", tr)), nil
 	case []interface{}:
 		// Слайсы (списки) читается как слайс
 		// с interface{}, поэтому придётся
@@ -27,14 +28,15 @@ func parse(triggerWord interface{}) (*regexp.Regexp, error) {
 		for _, v := range tr {
 			switch k := v.(type) {
 			case string:
-				keyWords = append(keyWords, strings.ToLower(k))
+				keyWords = append(keyWords, k)
 			case rune:
-				keyWords = append(keyWords, strings.ToLower(string(k)))
+				keyWords = append(keyWords, string(k))
 			default:
 				return nil, nil
 			}
 		}
-		return regexp.MustCompile(fmt.Sprintf("^(?:%v)(-)?([0-9]+)?", strings.Join(keyWords, "|"))), nil
+		// language=regexp
+		return regexp.MustCompile(fmt.Sprintf("(?i)^(?:%s)(-)?([0-9]+)?", strings.Join(keyWords, "|"))), nil
 	default:
 		return nil, nil
 	}
