@@ -32,7 +32,7 @@ func start(token string, triggerWord interface{}) {
 		if errors.GetType(err) == errors.Auth {
 			log.Println("Account run failed: invalid token")
 		} else {
-			log.Printf("Account run failed [*%v]: %v\n", token[len(token)-4:], err.Error())
+			log.Printf("Account run failed [*%s]: %v\n", token[len(token)-4:], err.Error())
 		}
 		return
 	}
@@ -40,7 +40,7 @@ func start(token string, triggerWord interface{}) {
 	regexp1, _ := parse(triggerWord)
 
 	if regexp1 == nil {
-		log.Printf("Account run failed [*%v]: Must be trigger word string or []string.\n", token[len(token)-4:])
+		log.Printf("Account run failed [*%s]: Must be trigger word string or []string.\n", token[len(token)-4:])
 	}
 
 	w := wrapper.NewWrapper(lp)
@@ -83,16 +83,16 @@ func start(token string, triggerWord interface{}) {
 		}
 
 		if toDelete.replace {
-			log.Printf("Delete replace in *%v (%v)\n", acc, toDelete.count)
+			log.Printf("Delete replace in *%s (%d)\n", acc, toDelete.count)
 			// Получение сообщений с помощью execute
 			messages, err := GetMessages(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
-				log.Printf("[*%v] Error getting messages (%v)", acc, err.Error())
+				log.Printf("[*%s] Error getting messages (%v)", acc, err.Error())
 				return
 			}
 
 			if len(messages) == 0 {
-				log.Printf("[*%v] Not found messages for edit.", acc)
+				log.Printf("[*%s] Not found messages for edit.", acc)
 				return
 			}
 
@@ -110,15 +110,9 @@ func start(token string, triggerWord interface{}) {
 					if err == nil {
 						count++
 						log.Printf("Edited %v messages\n", count)
-					} else {
-						// Если же мы не смогли отредактировать сообщение
-						// из-за капчи, немедленно срываем цикл и
-						// удаляем все сообщения, т.к. больше пытаться
-						// редактировать не имеет смысла
-						if errors.GetType(err) == errors.Captcha {
-							log.Println(err)
-							break
-						}
+					} else if errors.GetType(err) == errors.Captcha {
+						log.Println(err)
+						break
 					}
 
 					// Задержка для корректного удаления
@@ -128,32 +122,34 @@ func start(token string, triggerWord interface{}) {
 				}
 			}
 
-			log.Printf("[*%v] %v of %v messages edited.\n", acc, count, len(messages))
+			log.Printf("[*%s] %d of %d messages edited.\n", acc, count, len(messages))
 
 			for i := 0; i < 10; i++ {
 				_, err = vk.MessagesDelete(api.Params{"message_ids": messages, "delete_for_all": 1})
 				if err == nil {
-					log.Printf("[*%v] %v messages deleted!\n", acc, len(messages))
+					log.Printf("[*%s] %d messages deleted!\n", acc, len(messages))
 					break
 				}
-				log.Printf("[*%v] Error deleting, trying (%v)\n", acc, i)
+				log.Printf("[*%s] Error deleting, trying (%v)\n", acc, i)
 			}
-
 		} else {
-			log.Printf("[*%v] Delete %v messages\n", acc, toDelete.count)
+			log.Printf("[*%s] Delete %d messages\n", acc, toDelete.count)
 			// Удаление сообщений с помощью execute
 			deleted, err := DeleteExec(vk, toDelete.count+1, message.PeerID)
 			if err != nil {
-				log.Printf("[*%v] Error deleting messages! (%v)\n", acc, err.Error())
+				log.Printf("[*%s] Error deleting messages! (%v)\n", acc, err.Error())
 			}
-			log.Printf("[*%v] Deleted %v messages\n", acc, deleted)
+			log.Printf("[*%s] Deleted %d messages\n", acc, deleted)
 		}
 	})
 
-	// Запуск и автоподнятие
+	// Запуск аккаунта
 	for {
-		log.Printf("Run *%v\n", acc)
-		_ = lp.Run()
+		log.Printf("Run *%s\n", acc)
+		err := lp.Run()
+		if err != nil {
+			log.Printf("[*%s] LongPoll connecting error: %v, trying...", acc, err)
+		}
 		time.Sleep(time.Second * 10)
 	}
 }

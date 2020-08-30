@@ -17,6 +17,8 @@ Execute функции
 */
 
 // За рефакторинг execute кода спасибо https://vk.com/notqb
+
+// language=AS
 const code = `
 // Количество которое необходимо удалить
 var delete_count = parseInt(Args.delete_count);
@@ -40,11 +42,11 @@ while (messages.length > 0 && message_ids.length < delete_count) {
 
 	// Находим свои сообщения, сравнивая свой ID
 	// и которые возможно удалить для всех
-	if (message.from_id == self_id && (time - message.date) <= 86400) message_ids.push(message.id);
+	if (message.from_id == self_id && (time - message.date) < 86400) message_ids.push(message.id);
 }
 
-// Если этот аргумент "type" равен 1, значит удаляем сообщения, иначе возвращаем их ID
-if (Args.type) {
+// Если Args.del == true, значит удаляем сообщения, иначе возвращаем их ID
+if (Args.del) {
 	// Если у нас есть сообщения, которые можно удалить,
 	// тогда удаляем сообщения
 	if (message_ids) {
@@ -52,10 +54,10 @@ if (Args.type) {
 	}
 	// Иначе возвращаем 0
 	return 0;
-} else {
-	// Возвращаем сообщения, которые можно удалить
-	return message_ids;
 }
+
+// Возвращаем сообщения, которые можно удалить
+return message_ids;
 `
 
 var compressedCode string
@@ -72,7 +74,7 @@ func init() {
 func DeleteExec(vk *api.VK, toDeleteCount, peerID int) (int, error) {
 	var deleted int
 
-	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "type": 1}, &deleted)
+	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "del": true}, &deleted)
 
 	return deleted, err
 }
@@ -80,7 +82,7 @@ func DeleteExec(vk *api.VK, toDeleteCount, peerID int) (int, error) {
 func GetMessages(vk *api.VK, toDeleteCount, peerID int) ([]int, error) {
 	var resp []int
 
-	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "type": 0}, &resp)
+	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "del": false}, &resp)
 
 	return resp, err
 }
