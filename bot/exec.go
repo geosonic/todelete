@@ -45,8 +45,8 @@ while (messages.length > 0 && message_ids.length < delete_count) {
 	if (message.from_id == self_id && (time - message.date) < 86400) message_ids.push(message.id);
 }
 
-// Если Args.del == true, значит удаляем сообщения, иначе возвращаем их ID
-if (Args.del) {
+// Если Args.del == "true", значит удаляем сообщения, иначе возвращаем их ID
+if (Args.del == "true") {
 	// Если у нас есть сообщения, которые можно удалить,
 	// тогда удаляем сообщения
 	if (message_ids) {
