@@ -45,8 +45,8 @@ while (messages.length > 0 && message_ids.length < delete_count) {
 	if (message.from_id == self_id && (time - message.date) < 86400) message_ids.push(message.id);
 }
 
-// Если Args.del == "true", значит удаляем сообщения, иначе возвращаем их ID
-if (Args.del == "true") {
+// Если Args.del существует, значит удаляем сообщения, иначе возвращаем их ID
+if (Args.del) {
 	// Если у нас есть сообщения, которые можно удалить,
 	// тогда удаляем сообщения
 	if (message_ids) {
@@ -82,7 +82,7 @@ func DeleteExec(vk *api.VK, toDeleteCount, peerID int) (int, error) {
 func GetMessages(vk *api.VK, toDeleteCount, peerID int) ([]int, error) {
 	var resp []int
 
-	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID, "del": false}, &resp)
+	err := vk.ExecuteWithArgs(compressedCode, api.Params{"delete_count": toDeleteCount, "peer_id": peerID}, &resp)
 
 	return resp, err
 }
