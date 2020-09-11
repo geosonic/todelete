@@ -1,11 +1,14 @@
 github.com/SevereCloud/vksdk v1.10.0 h1:iKK2hHJSyW2yzd3ask3fxKPxmvAJ+5bqyCs/Sn4IBRQ=
 github.com/SevereCloud/vksdk v1.10.0/go.mod h1:BUxU4W2WoFwFU83aopUmXKTjbdgDgEDCTGdOJfdxSB0=
+github.com/SevereCloud/vksdk/v2 v2.0.1 h1:qs17Rkz1W25R8M3AZ9NmoiTUWkRMuWudU6xNqj1vgAg=
+github.com/SevereCloud/vksdk/v2 v2.0.1/go.mod h1:iwdTeJBKKoQqpNtuK/pakABhKtF/NlqiqZjewQ1T6mQ=
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927/go.mod h1:h/aW8ynjgkuj+NQRlZcDbAbM1ORAbXjXX77sX7T289U=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/gorilla/schema v1.1.0/go.mod h1:kgLaKoK1FELgZqMAVxx/5cbj0kT+57qxUrAlIO2eleU=
+github.com/gorilla/schema v1.2.0/go.mod h1:kgLaKoK1FELgZqMAVxx/5cbj0kT+57qxUrAlIO2eleU=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/matryer/try v0.0.0-20161228173917-9ac251b645a2/go.mod h1:0KeJpeMD6o+O4hW7qJOT7vyQPKrWmj26uf5wMc/IiIs=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=

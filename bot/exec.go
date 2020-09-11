@@ -7,7 +7,7 @@ package bot
 import (
 	"log"
 
-	"github.com/SevereCloud/vksdk/api"
+	"github.com/SevereCloud/vksdk/v2/api"
 )
 
 /*

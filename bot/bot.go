@@ -5,19 +5,19 @@
 package bot
 
 import (
+	"errors"
 	"log"
 	"sort"
 	"strconv"
 	"time"
 
-	"github.com/SevereCloud/vksdk/longpoll-user/v3"
+	"github.com/SevereCloud/vksdk/v2/longpoll-user/v3"
 
-	"github.com/SevereCloud/vksdk/api"
-	"github.com/SevereCloud/vksdk/api/errors"
-	"github.com/SevereCloud/vksdk/longpoll-user"
+	"github.com/SevereCloud/vksdk/v2/api"
+	"github.com/SevereCloud/vksdk/v2/longpoll-user"
 )
 
-const Version = "1.2"
+const Version = "2.0.0"
 
 // Запускает аккаунт
 func start(token string, triggerWord interface{}) {
@@ -26,9 +26,9 @@ func start(token string, triggerWord interface{}) {
 	// запросов, установим лимит
 	vk.Limit = api.LimitUserToken
 	vk.UserAgent += ", toDelete/" + Version + " (+https://github.com/geosonic/todelete)"
-	lp, err := longpoll.NewLongpoll(vk, longpoll.ReceiveAttachments)
+	lp, err := longpoll.NewLongPoll(vk, longpoll.ReceiveAttachments)
 	if err != nil {
-		if errors.GetType(err) == errors.Auth {
+		if errors.Is(err, api.ErrAuth) {
 			log.Println("Account run failed: invalid token")
 		} else {
 			log.Printf("Account run failed [*%s]: %v\n", token[len(token)-4:], err.Error())
@@ -107,7 +107,7 @@ func start(token string, triggerWord interface{}) {
 					if err == nil {
 						count++
 						log.Printf("Edited %v messages\n", count)
-					} else if errors.GetType(err) == errors.Captcha {
+					} else if errors.Is(err, api.ErrCaptcha) {
 						log.Println(err)
 						break
 					}

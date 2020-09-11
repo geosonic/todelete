@@ -5,19 +5,21 @@
 package bot
 
 import (
+	"sync"
+
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/js"
 )
 
 var m = minify.New()
 
-func init() {
-	m.Add("text/js", &js.Minifier{})
-}
+var once sync.Once
 
 // Сжатие JavaScript кода
 func CompressJS(code string) (string, error) {
-	t, err := m.String("text/js", code)
+	once.Do(func() {
+		m.Add("text/js", &js.Minifier{})
+	})
 
-	return t, err
+	return m.String("text/js", code)
 }
