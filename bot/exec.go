@@ -5,7 +5,6 @@
 package bot
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/SevereCloud/vksdk/v2/api"
@@ -70,7 +69,6 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(compressedCode)
 }
 
 func DeleteExec(vk *api.VK, toDeleteCount, peerID int) (int, error) {
