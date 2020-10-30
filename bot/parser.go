@@ -5,39 +5,88 @@
 package bot
 
 import (
+	"encoding/json"
 	"fmt"
-	"regexp"
-	"strings"
+	"io/ioutil"
+	"log"
+	"os"
 )
 
-func parse(triggerWord interface{}) (*regexp.Regexp, error) {
-	switch tr := triggerWord.(type) {
+func parseKeyWord(keyword interface{}) []string {
+	fmt.Println(keyword)
+	switch tr := keyword.(type) {
 	case string:
-		// Если указана строка, то сразу компилируем
-		// регулярку и возвращаем объект, а ещё
-		// это работает как обратная совместимость
-
-		// language=regexp
-		return regexp.MustCompile(fmt.Sprintf("(?i)^%s(-)?([0-9]+)?", tr)), nil
+		return []string{tr}
 	case []interface{}:
-		// Слайсы (списки) читается как слайс
-		// с interface{}, поэтому придётся
-		// проверять каждый объект
-
 		var keyWords = make([]string, 0, len(tr))
 		for _, v := range tr {
 			switch k := v.(type) {
 			case string:
 				keyWords = append(keyWords, k)
-			case rune:
-				keyWords = append(keyWords, string(k))
 			default:
-				return nil, nil
+				panic(fmt.Errorf("i want string or []string, no %T", keyword))
 			}
 		}
-		// language=regexp
-		return regexp.MustCompile(fmt.Sprintf("(?i)^(?:%s)(-)?([0-9]+)?", strings.Join(keyWords, "|"))), nil
+
+		return keyWords
 	default:
-		return nil, nil
+		panic(fmt.Errorf("i want string or []string, no %T", keyword))
+	}
+}
+
+type Config struct {
+	Keywords          []string `json:"keywords"`
+	Separator         string   `json:"separator"`
+	ToEditString      string   `json:"to_edit_string"`
+	CountSeparator    bool     `json:"count_separator"`
+	DeleteTriggerFast bool     `json:"delete_trigger_fast"`
+	EditTrigger       bool     `json:"edit_trigger"`
+}
+
+// Переводит формат старого конфига в новый формат
+// Совмещать типы из старого формата и нового никак нельзя!
+func TranspileConfig(configPath string) {
+	/* Аккаунты теперь должны находиться в config.json */
+	var accounts map[string]interface{}
+
+	file, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		log.Fatalln("Error reading file:", err)
+	}
+
+	if !json.Valid(file) {
+		log.Fatalln("Incorrect config file.")
+	}
+
+	err = json.Unmarshal(file, &accounts)
+	if err != nil {
+		log.Fatalln("Can't unmarshal json:", err)
+	}
+
+	if len(accounts) == 0 {
+		log.Fatalln("Accounts not found!")
+	}
+
+	var newConfig = make(map[string]Config)
+
+	for token, v := range accounts {
+		config := Config{
+			Keywords:          parseKeyWord(v),
+			Separator:         "-", // по умолчанию задан такой триггер для редактирования
+			ToEditString:      "ᅠ",
+			CountSeparator:    false,
+			DeleteTriggerFast: false,
+			EditTrigger:       false,
+		}
+		newConfig[token] = config
+	}
+	content, err := json.MarshalIndent(newConfig, "", "\t")
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile(configPath, content, os.ModePerm)
+	if err != nil {
+		panic(err)
 	}
 }

@@ -1,3 +1,12 @@
 {
-  "token": "keyWord"
+	"token": {
+		"keywords": [
+			"keyword"
+		],
+		"separator": "-",
+		"to_edit_string": "ᅠ",
+		"count_separator": false,
+		"delete_trigger_fast": false,
+		"edit_trigger": false
+	}
 }

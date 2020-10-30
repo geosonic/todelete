@@ -17,12 +17,13 @@ import (
 func main() {
 	/* Аккаунты теперь должны находиться в config.json */
 	fmt.Printf("To Delete %s by GeoSonic for %s_%s\n", bot.Version, runtime.GOOS, runtime.GOARCH)
-	var accounts map[string]interface{}
+	var accounts map[string]bot.Config
 
 	// Путь к конфигу
 	configPath := flag.String("configPath", "config.json", "path to config")
 	flag.Parse()
 
+L1:
 	file, err := ioutil.ReadFile(*configPath)
 	if err != nil {
 		log.Fatalln("Error reading file:", err)
@@ -34,7 +35,9 @@ func main() {
 
 	err = json.Unmarshal(file, &accounts)
 	if err != nil {
-		log.Fatalln("Can't unmarshal json:", err)
+		// Если конфиг будет битым - он запаникует, так что норм
+		bot.TranspileConfig(*configPath)
+		goto L1 // Знаю, что goto это плохо, но так красиво
 	}
 
 	if len(accounts) == 0 {
