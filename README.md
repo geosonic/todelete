@@ -4,8 +4,6 @@
 Функционал взят [отсюда](https://github.com/P2LOVE/VK-UserSide-Bot).
 Используется библиотека [VK SDK](https://github.com/SevereCloud/vksdk) от [SevereCloud](https://github.com/SevereCloud).
 
-![](example.gif)
-
 # Установка
 
 Сначала проверьте, есть ли готовый бинарный файл под Вашу платформу в [releases](https://github.com/geosonic/todelete/releases), иначе необходимо установить компилятор Golang, а также скачать библиотеку [VK SDK](https://github.com/SevereCloud/vksdk).
